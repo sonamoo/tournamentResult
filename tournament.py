@@ -16,7 +16,7 @@ def deleteMatches():
     conn = connect()
     db_cursor = conn.cursor()
     QUERY = "DELETE FROM matches;"
-    db_cursor.execut(QUERY)
+    db_cursor.execute(QUERY)
     conn.commit()
     conn.close()
 
@@ -26,7 +26,7 @@ def deletePlayers():
     conn = connect()
     db_cursor = conn.cursor()
     QUERY = "DELETE FROM players;"
-    db_cursor.execut(QUERY)
+    db_cursor.execute(QUERY)
     conn.commit()
     conn.close()
 
@@ -35,10 +35,11 @@ def countPlayers():
     """Returns the number of players currently registered."""
     conn = connect()
     db_cursor = conn.cursor()
-    QUERY = ""
-    db_cursor.execut(QUERY)
-    conn.commit()
-    conn.close()    
+    QUERY = "select count(*) from players"
+    db_cursor.execute(QUERY)
+    players_number = db_cursor.fetchone()
+    conn.close()
+    return players_number[0]
 
 
 def registerPlayer(name):
@@ -53,8 +54,8 @@ def registerPlayer(name):
     conn = connect()
     db_cursor = conn.cursor()
     ## connect object comes with the cursor() which is a built in function
-    QUERY = "INSERT INTO players (name) VALUES (%s);" % name
-    db_cursor.execute(QUERY)
+    QUERY = "INSERT INTO players (name) VALUES (%s);"
+    db_cursor.execute(QUERY, (name,))
     conn.commit()
     conn.close()
 
@@ -73,18 +74,12 @@ def playerStandings():
     """
     conn = connect()
     db_cursor = conn.cursor()
-    QUERY = 
-            """
-            SELECT players.id, players.name, view_wins.wins, view_matches.matches 
-            FROM players LEFT JOIN view_wins ON players.id = view_wins.player 
-            LEFT JOIN view_matches ON players.id = view_matches.player 
-            GROUP BY players.id, players.name, view_wins.wins, view_matches.matches 
-            ORDER BY view_wins.wins DESC;
-            """
+    QUERY = "SELECT * FROM view_standings";
     db_cursor.execute(QUERY)
     standings = db_cursor.fetchall()
     conn.commit()
     conn.close()
+    return standings
 
 def reportMatch(winner, loser):
     """Records the outcome of a single match between two players.
@@ -117,5 +112,11 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+
+    standings = playerStandings()
+    return [(standings[i-1][0], standings[i-1][1], standings[i][0], standings[i][1])
+                for i in range(1, len(standings), 2)]
+
+
 
 
