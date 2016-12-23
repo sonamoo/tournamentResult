@@ -38,18 +38,23 @@ INSERT INTO matches(winner, loser) values(4, 6);
 INSERT INTO matches(winner, loser) values(2, 7);
 
 
-CREATE VIEW win_total as 
-select players.name, count(players.name) as win_total
-from players, matches 
-where players.id = matches.winner
-group by players.name
-order by win_total desc;
+CREATE VIEW view_wins as 
+SELECT players.id as player, count(players.name) as wins
+FROM players, matches 
+WHERE players.id = matches.winner
+GROUP BY players.id
+ORDER BY wins desc;
 
-CREATE VIEW lose_total as
-select players.name, count(players.name) as lose_total
-from players, matches
-where players.id = matches.loser
-group by players.name
-order by lose_total desc;
+CREATE VIEW view_loses as
+SELECT players.id as player, count(players.name) as loses
+FROM players, matches
+WHERE players.id = matches.loser
+GROUP BY players.id
+ORDER BY loses desc;
 
-
+CREATE VIEW view_matches as
+SELECT players.id as player, count(matches) as matches
+FROM players LEFT JOIN matches
+ON (players.id = matches.winner) OR (players.id = matches.loser)
+GROUP BY players.id
+ORDER BY players.id ASC;

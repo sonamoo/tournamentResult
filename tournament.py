@@ -73,7 +73,14 @@ def playerStandings():
     """
     conn = connect()
     db_cursor = conn.cursor()
-    QUERY = "SELECT * FROM players "
+    QUERY = """
+            SELECT players.id, players.name, view_wins.wins, view_matches.matches 
+            FROM players LEFT JOIN view_wins ON players.id = view_wins.player 
+            LEFT JOIN view_matches ON players.id = view_matches.player 
+            GROUP BY players.id, players.name, view_wins.wins, view_matches.matches 
+            ORDER BY view_wins.wins DESC";
+
+            """
 
 
 
