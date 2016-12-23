@@ -53,7 +53,7 @@ def registerPlayer(name):
     conn = connect()
     db_cursor = conn.cursor()
     ## connect object comes with the cursor() which is a built in function
-    QUERY = "INSERT INTO players (name) VALUES ('%s');" % name
+    QUERY = "INSERT INTO players (name) VALUES (%s);" % name
     db_cursor.execute(QUERY)
     conn.commit()
     conn.close()
@@ -73,16 +73,18 @@ def playerStandings():
     """
     conn = connect()
     db_cursor = conn.cursor()
-    QUERY = """
+    QUERY = 
+            """
             SELECT players.id, players.name, view_wins.wins, view_matches.matches 
             FROM players LEFT JOIN view_wins ON players.id = view_wins.player 
             LEFT JOIN view_matches ON players.id = view_matches.player 
             GROUP BY players.id, players.name, view_wins.wins, view_matches.matches 
-            ORDER BY view_wins.wins DESC";
-
+            ORDER BY view_wins.wins DESC;
             """
-
-
+    db_cursor.execute(QUERY)
+    standings = db_cursor.fetchall()
+    conn.commit()
+    conn.close()
 
 def reportMatch(winner, loser):
     """Records the outcome of a single match between two players.
@@ -91,6 +93,13 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
+
+    conn = connect()
+    db_cursor = conn.cursor()
+    QUERY = "INSERT INTO matches (winner, loser) VALUES (%s, %s);"
+    db_cursor.execute(QUERY, (int(winner), int(loser)))
+    conn.commit()
+    conn.close()
  
  
 def swissPairings():
