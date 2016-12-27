@@ -2,11 +2,11 @@
 --
 -- Put your SQL 'create table' statements in this file; also 'create view'
 -- statements if you choose to use it.
-/*
+
 DROP DATABASE IF EXISTS tournament;
 CREATE DATABASE tournament;
 \connect tournament;
-*/
+
 CREATE TABLE players (id SERIAL PRIMARY KEY, name TEXT);
 
 CREATE TABLE matches (id SERIAL PRIMARY KEY, 
@@ -40,16 +40,16 @@ INSERT INTO matches(winner, loser) values(2, 7);
 */
 
 CREATE VIEW view_wins AS 
-SELECT players.id AS player, count(players.name) AS wins
+SELECT players.id AS player, count(matches.winner) AS wins
 FROM players LEFT JOIN matches 
-WHERE players.id = matches.winner
+ON players.id = matches.winner
 GROUP BY players.id
 ORDER BY wins desc;
 
 CREATE VIEW view_loses AS
-SELECT players.id AS player, count(players.name) AS loses
+SELECT players.id AS player, count(matches.loser) AS loses
 FROM players LEFT JOIN matches
-WHERE players.id = matches.loser
+ON players.id = matches.loser
 GROUP BY players.id
 ORDER BY loses desc;
 
