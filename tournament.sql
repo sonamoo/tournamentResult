@@ -13,32 +13,6 @@ CREATE TABLE matches (id SERIAL PRIMARY KEY,
 					  winner INTEGER REFERENCES players(id),
 					  loser INTEGER REFERENCES players(id));
 
-/*
--- Insert players 
-INSERT INTO players(name) values('Baby Octopus');
-INSERT INTO players(name) values('Lion');
-INSERT INTO players(name) values('Tiger');
-INSERT INTO players(name) values('Fish');
-INSERT INTO players(name) values('Rabbit');
-INSERT INTO players(name) values('Squirrel');
-INSERT INTO players(name) values('Chipmunk');
-INSERT INTO players(name) values('Sparrow');
-
--- Insert maches
-INSERT INTO matches(winner, loser) values(1, 2);
-INSERT INTO matches(winner, loser) values(3, 4);
-INSERT INTO matches(winner, loser) values(5, 6);
-INSERT INTO matches(winner, loser) values(7, 8);
-INSERT INTO matches(winner, loser) values(2, 1);
-INSERT INTO matches(winner, loser) values(4, 3);
-INSERT INTO matches(winner, loser) values(6, 5);
-INSERT INTO matches(winner, loser) values(8, 7);
-INSERT INTO matches(winner, loser) values(1, 3);
-INSERT INTO matches(winner, loser) values(5, 8);
-INSERT INTO matches(winner, loser) values(4, 6);
-INSERT INTO matches(winner, loser) values(2, 7);
-*/
-
 CREATE VIEW view_wins AS 
 SELECT players.id AS player, count(matches.winner) AS wins
 FROM players LEFT JOIN matches 
@@ -67,4 +41,3 @@ LEFT JOIN view_wins ON players.id = view_wins.player
 LEFT JOIN view_matches ON players.id = view_matches.player
 GROUP BY players.id, players.name, view_wins.wins, view_matches.matches
 ORDER BY view_wins.wins DESC;
-
